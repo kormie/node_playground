@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Shitty Page</title>
+  </head>
+  <body>
+    <h3>Here it is</h3>
+    <div id="questions"></div>
+    <form method="post">
+      <textarea id="question_input" name="question" rows="12"></textarea>
+      <input type="submit">
+    </form>
+    <script src="/jquery.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var server = io.connect('http://localhost:8080');
+
+      server.on('question', function(data){
+        insertQuestion(data);
+      });
+
+      var insertQuestion = function(text){
+        new_div = $("<div class='question'></div>")
+        new_div.html(text)
+        $("#questions").append(new_div);
+      };
+
+      var text_box = $('#question_input');
+
+      $('input[type="submit"]').click(function(e){
+        e.preventDefault();
+        var user_input = text_box.val();
+        server.emit('question', user_input);
+        text_box.val("");
+      });
+    </script>
+  </body>
+</html>
